@@ -10,3 +10,5 @@ next-env.d.ts
 dist/
 release/
 native/
+AGENTS.md
+CLAUDE.md

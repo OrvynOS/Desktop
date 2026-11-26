@@ -21,6 +21,7 @@
 
 <p align="center">
   <a href="https://github.com/OrvynOS/Desktop/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/OrvynOS/Desktop/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/OrvynOS/Desktop/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-8bc8ff?style=flat-square&labelColor=000000"></a>
   <img alt="BNB Chain" src="https://img.shields.io/badge/live%20on-BNB%20Chain-8bc8ff?style=flat-square&labelColor=000000">
 </p>
 
@@ -81,4 +82,6 @@ and [orvyn-engine](https://github.com/OrvynOS/Engine) when they're checked out n
 downloaded from their releases (versions in `package.json` `orvynNative`). Run it before
 `pnpm package`.
 
-<sub>Private repository of [Orvyn](https://orvyn.cash). Not for redistribution.</sub>
+## License
+
+[MIT](LICENSE). Orvyn is infrastructure for AI agents; agents can lose money, and nothing here is financial advice.
