@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Vyn" data-mood="idle">
+<g class="vyn-head" transform="rotate(0 128 150)">
+  <circle cx="62" cy="70" r="31" fill="#1A1E26" stroke="#FFFFFF" stroke-opacity=".12" stroke-width="2.5"/>
+  <circle cx="194" cy="70" r="31" fill="#1A1E26" stroke="#FFFFFF" stroke-opacity=".12" stroke-width="2.5"/>
+  <circle cx="62" cy="70" r="15" fill="#2A303B"/>
+  <circle cx="194" cy="70" r="15" fill="#2A303B"/>
+  <ellipse cx="128" cy="142" rx="88" ry="80" fill="#1A1E26"/>
+  <ellipse cx="128" cy="142" rx="87" ry="79" fill="none" stroke="#FFFFFF" stroke-opacity=".12" stroke-width="2.5"/>
+  <ellipse cx="128" cy="174" rx="37" ry="27" fill="#2A303B"/>
+  <path d="M120 160 Q128 154 136 160 Q137 167 128 171 Q119 167 120 160 Z" fill="#8BC8FF"/>
+  <g class="vyn-eyes"><rect x="90.5" y="115" width="15" height="26" rx="7.5" fill="#FFFFFF"/><rect x="150.5" y="115" width="15" height="26" rx="7.5" fill="#FFFFFF"/></g>
+  <g class="vyn-mouth-g"><path d="M118 177 Q128 185 138 177" stroke="#FFFFFF" stroke-opacity=".75" stroke-width="3.5" stroke-linecap="round" fill="none"/></g>
+  <g transform="translate(200 42) rotate(14)">
+    <path d="M0 0 L-25 -13 Q-31 -16 -31 -9 L-31 9 Q-31 16 -25 13 Z" fill="#8BC8FF"/>
+    <path d="M0 0 L25 -13 Q31 -16 31 -9 L31 9 Q31 16 25 13 Z" fill="#8BC8FF"/>
+    <path d="M-25 -13 L0 0 L-25 13" fill="#000" fill-opacity=".12"/>
+    <rect x="-7" y="-8" width="14" height="16" rx="5" fill="#04121F"/>
+    </g>
+</g>
+
+</svg>

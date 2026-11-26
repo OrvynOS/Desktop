@@ -1,0 +1,106 @@
+{
+  "name": "@orvyn/vyn-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Vyn, the Orvyn companion, for Windows, macOS and Linux",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "tsc -p . && node scripts/build-ui.mjs",
+    "dev": "tsc -p . && node scripts/build-ui.mjs && electron .",
+    "typecheck": "tsc -p . --noEmit && tsc -p ui --noEmit",
+    "build:native": "node scripts/native.mjs",
+    "package": "tsc -p . && node scripts/build-ui.mjs && electron-builder --publish never"
+  },
+  "devDependencies": {
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/lang-html": "^6.4.12",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lang-markdown": "^6.5.2",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/merge": "^6.12.3",
+    "@codemirror/search": "^6.7.2",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@fontsource-variable/jetbrains-mono": "^5.2.5",
+    "@fontsource-variable/schibsted-grotesk": "^5.2.5",
+    "@lezer/highlight": "^1.2.5",
+    "@types/node": "^26.6.3",
+    "electron": "45.2.3",
+    "electron-builder": "26.17.0",
+    "esbuild": "^0.28.2",
+    "lucide": "^1.77.0",
+    "typescript": "^7.0.2"
+  },
+  "build": {
+    "appId": "cash.orvyn.vyn",
+    "productName": "Vyn",
+    "files": [
+      "dist/**",
+      "static/**",
+      "package.json"
+    ],
+    "protocols": [
+      {
+        "name": "Vyn",
+        "schemes": [
+          "vyn"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
+    },
+    "directories": {
+      "output": "release"
+    },
+    "extraResources": [
+      {
+        "from": "native/bin",
+        "to": "bin"
+      },
+      {
+        "from": "native/engine",
+        "to": "engine",
+        "filter": [
+          "player.js",
+          "orvyn_engine.wasm"
+        ]
+      },
+      {
+        "from": "native/studio-libs",
+        "to": "studio-libs"
+      }
+    ]
+  },
+  "author": "Orvyn",
+  "dependencies": {
+    "viem": "^2.57.8"
+  },
+  "packageManager": "pnpm@12.6.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "repository": "https://github.com/OrvynOS/Desktop",
+  "orvynNative": {
+    "reel": "v0.1.0",
+    "studio": "v0.1.0",
+    "worlds": "v0.1.0",
+    "engine": "v0.1.0"
+  }
+}
