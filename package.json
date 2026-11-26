@@ -64,7 +64,11 @@
         "AppImage",
         "deb"
       ],
-      "category": "Utility"
+      "category": "Utility",
+      "executableName": "vyn",
+      "maintainer": "Orvyn <hello@orvyn.cash>",
+      "synopsis": "Your companion from Orvyn",
+      "description": "Vyn, the Orvyn companion, for Windows, macOS and Linux"
     },
     "directories": {
       "output": "release"
@@ -86,12 +90,14 @@
         "from": "native/studio-libs",
         "to": "studio-libs"
       }
-    ]
+    ],
+    "artifactName": "Vyn-${version}-${os}-${arch}.${ext}"
   },
   "author": "Orvyn",
   "dependencies": {
     "viem": "^2.57.8"
   },
+  "homepage": "https://orvyn.cash",
   "packageManager": "pnpm@12.6.0",
   "engines": {
     "node": ">=22.12"
