@@ -1,5 +1,5 @@
-/** The sidebar: new chat, Vyn's conversations, the person's own Orvyn agents, and Vyn herself at the foot. */
-import { api, h, type Agent, type Result } from "./bridge";
+/** The sidebar: new chat, Vyn's conversations, the person's own Orvyn agents, and you at the foot. */
+import { api, h, type Account, type Agent, type Result } from "./bridge";
 import * as chat from "./chat";
 import { face } from "./face";
 import { icon } from "./icons";
@@ -9,6 +9,7 @@ let threads: { id: string; title: string }[] = [];
 let agents: Agent[] = [];
 let agentsError: string | null = null;
 let me: { handle?: string | null; connected: boolean } = { connected: false };
+let account: Account | null = null;
 let hooks: { error: (r: Result<unknown>) => void; settings: () => void };
 
 export function mount(container: HTMLElement, h0: typeof hooks) {
@@ -20,8 +21,9 @@ export const allThreads = () => threads;
 export const allAgents = () => agents;
 
 export async function refresh(select?: { kind: "vyn" | "agent"; id: string }) {
-  const [t, a, c] = await Promise.all([api.listThreads(), api.agents.list(), api.companion.status()]);
+  const [t, a, c, acct] = await Promise.all([api.listThreads(), api.agents.list(), api.companion.status(), api.account()]);
   me = c.ok && c.data ? c.data : { connected: false };
+  account = acct.ok && acct.data ? acct.data : account;
   if (!t.ok) return hooks.error(t);
   threads = t.data!.threads;
   if (!threads.length) {
@@ -80,9 +82,8 @@ function render(active: { kind: string; id: string }) {
       { class: "side-foot" },
       h(
         "button",
-        { class: "me", type: "button", title: "Settings", onclick: () => hooks.settings() },
-        face(26),
-        h("span", { class: "me-text" }, h("b", {}, "Vyn"), h("span", {}, me.connected && me.handle ? `@${me.handle}` : "Your companion")),
+        { class: "me", type: "button", title: "Your account and settings", onclick: () => hooks.settings() },
+        ...person(),
         icon("settings", 15, "me-gear"),
       ),
     ),
@@ -116,4 +117,15 @@ async function remove(id: string, title: string) {
   if (!r.ok) return hooks.error(r);
   const cur = chat.currentConvo();
   await refresh(cur ? { kind: cur.kind, id: cur.id } : undefined);
+}
+
+/** You, at the foot: your Social picture (or initial), your name and Agent ID; Vyn's face until it loads. */
+function person(): HTMLElement[] {
+  const a = account;
+  if (!a) return [face(26), h("span", { class: "me-text" }, h("b", {}, "Vyn"), h("span", {}, me.connected && me.handle ? `@${me.handle}` : "Your companion"))];
+  const p = a.social && a.social.member ? a.social.profile : null;
+  const name = p?.name || a.me.email || (a.me.social?.username ? `@${a.me.social.username}` : `${a.me.accountId.slice(0, 6)}…${a.me.accountId.slice(-4)}`);
+  const sub = p ? `@${p.handle} · ${p.agentId}` : a.agents.total ? `${a.agents.total} agent${a.agents.total === 1 ? "" : "s"} · ${a.agents.live} live` : "Your account";
+  const av = p?.avatar ? h("img", { class: "me-av", src: p.avatar, alt: "" }) : h("span", { class: "me-av" }, (name.replace(/[^A-Za-z0-9]/g, "")[0] ?? "O").toUpperCase());
+  return [av, h("span", { class: "me-text" }, h("b", {}, name), h("span", {}, sub))];
 }

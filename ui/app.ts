@@ -35,7 +35,7 @@ export function toast(text: string) {
 }
 
 async function openSettings() {
-  await settings.open({ signOut: () => void signOut() });
+  await settings.open({ signOut: () => void signOut(), section: "account" });
   void sidebar.refresh();
 }
 

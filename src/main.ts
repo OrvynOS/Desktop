@@ -263,6 +263,7 @@ ipcMain.handle(
 );
 ipcMain.handle("auth:signOut", wrap(signOut));
 ipcMain.handle("settings:get", wrap(() => vynApi("GET", "/settings")));
+ipcMain.handle("account:get", wrap(() => vynApi("GET", "/account")));
 ipcMain.handle("settings:save", wrap((s: Record<string, unknown>) => vynApi("PUT", "/settings", s)));
 ipcMain.handle("threads:list", wrap(() => vynApi("GET", "/threads")));
 ipcMain.handle("threads:create", wrap(() => vynApi("POST", "/threads", {})));

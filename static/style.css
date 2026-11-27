@@ -495,3 +495,25 @@ progress { width: 100%; height: 4px; accent-color: var(--sky); border-radius: 4p
 .side-item, .seg-btn, .set-tab { transition: background 0.15s, color 0.15s; }
 .chat-stage { scroll-behavior: auto; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; } }
+
+/* ---- You: the sidebar foot and the Account page ---- */
+.me-av { width: 28px; height: 28px; border-radius: 999px; flex: none; display: grid; place-items: center; background: var(--sky); color: var(--on-sky); font: 700 12px var(--sans); object-fit: cover; }
+.acct { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; }
+.acct-hero { display: flex; gap: 16px; align-items: flex-start; padding: 18px; border-radius: 20px; background: var(--bg-3); }
+.acct-av { width: 64px; height: 64px; border-radius: 999px; flex: none; display: grid; place-items: center; background: var(--sky); color: var(--on-sky); font: 800 24px var(--sans); object-fit: cover; }
+.acct-names { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.acct-names > b { font-size: 22px; font-weight: 800; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.acct-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.acct .chip { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 999px; border: 0; background: var(--bg-4); color: var(--fg-2); font: 600 12px var(--sans); text-decoration: none; cursor: default; }
+.acct .chip.mono { font-family: var(--mono); cursor: pointer; }
+.acct .chip.mono:hover, .acct a.chip:hover { color: var(--fg); }
+.acct .chip.accent { color: var(--sky); cursor: pointer; }
+.acct-bio { margin: 0; color: var(--fg-2); font-size: 13px; }
+.acct-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.acct-stats.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.acct-stat { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 16px; background: var(--bg-3); min-width: 0; }
+.acct-stat span { color: var(--fg-3); font-size: 12px; }
+.acct-stat b { font: 600 17px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.acct-stat small { color: var(--fg-3); font-size: 11.5px; }
+.acct-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.acct-links .btn { text-decoration: none; }

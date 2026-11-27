@@ -36,7 +36,16 @@ export interface Agent {
 
 type R<T> = Promise<Result<T>>;
 
+/** The person's profile (GET /api/vyn/account). */
+export interface Account {
+  me: { accountId: string; signInMethod: "privy" | "wallet"; email: string | null; social: { provider: string; username: string | null } | null; balances: { bnb: number | null; usdt: number | null; usdc: number | null } };
+  credits: number | null;
+  social: { member: true; profile: { handle: string; name: string; avatar: string | null; bio: string; agentId: string; followers: number; following: number; posts: number } } | { member: false; reason?: string } | null;
+  agents: { total: number; live: number };
+}
+
 export interface Bridge {
+  account(): R<Account>;
   authState(): R<{ signedIn: boolean; me?: { name?: string } }>;
   signIn(): R<{ userCode: string; verificationUri: string }>;
   signOut(): R<void>;

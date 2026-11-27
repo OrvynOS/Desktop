@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld("vyn", {
   signIn: () => call("auth:start"),
   signOut: () => call("auth:signOut"),
   getSettings: () => call("settings:get"),
+  account: () => call("account:get"),
   saveSettings: (s: unknown) => call("settings:save", s),
   listThreads: () => call("threads:list"),
   createThread: () => call("threads:create"),

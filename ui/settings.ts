@@ -1,6 +1,6 @@
 /**
  * Settings, as a panel: sections in a list on the left, one page each on the right, each saving
- * its own changes. You (how Vyn talks to you), AI (provider, model, key), Files (what she may
+ * its own changes. Account (who you are on Orvyn), You (how Vyn talks to you), AI (provider, model, key), Files (what she may
  * change), Vyn on Orvyn (her agent identity), Telegram, Reminders, Memory.
  */
 import { api, h } from "./bridge";
@@ -17,8 +17,9 @@ function handleProblem(v: string) {
 
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
 
-type Section = "you" | "ai" | "files" | "orvyn" | "binance" | "telegram" | "reminders" | "memory";
+type Section = "account" | "you" | "ai" | "files" | "orvyn" | "binance" | "telegram" | "reminders" | "memory";
 const SECTIONS: [Section, string, IconName][] = [
+  ["account", "Account", "wallet"],
   ["you", "You", "sparkles"],
   ["ai", "AI", "key"],
   ["files", "Files", "folder"],
@@ -29,7 +30,59 @@ const SECTIONS: [Section, string, IconName][] = [
   ["memory", "Memory", "eye"],
 ];
 
-let lastSection: Section = "you";
+let lastSection: Section = "account";
+
+const ORVYN_APP = "https://app.orvyn.cash";
+const ORVYN_SOCIAL = "https://social.orvyn.cash";
+const short = (a: string, head = 6, tail = 4) => (a.length > head + tail + 1 ? `${a.slice(0, head)}…${a.slice(-tail)}` : a);
+const money = (n: number | null | undefined) => (n == null ? "—" : "$" + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+const bnb = (n: number | null | undefined) => (n == null ? "—" : n.toLocaleString(undefined, { maximumFractionDigits: 4 }));
+const PROVIDER: Record<string, string> = { telegram: "Telegram", twitter: "X", x: "X" };
+
+/** Your Orvyn profile: who you are, balances, credits, agents and Social. */
+function accountPage(head: (t: string, l: string) => (HTMLElement | string)[]): (HTMLElement | string)[] {
+  const body = h("div", { class: "acct" }, h("p", { class: "set-empty" }, "Loading…"));
+  void api.account().then((r) => {
+    if (!r.ok || !r.data) return body.replaceChildren(h("p", { class: "error" }, r.error ?? "Couldn't load your account."));
+    const { me, credits, social, agents } = r.data;
+    const p = social && social.member ? social.profile : null;
+    const name = p?.name || me.email || (me.social?.username ? `@${me.social.username}` : short(me.accountId));
+    const via = me.signInMethod === "privy" ? (me.social ? (PROVIDER[me.social.provider] ?? me.social.provider) : me.email ? "email" : "Orvyn") : "your own wallet";
+    const stable = (me.balances.usdt ?? 0) + (me.balances.usdc ?? 0);
+    const avatar = p?.avatar ? h("img", { class: "acct-av", src: p.avatar, alt: "" }) : h("span", { class: "acct-av" }, (name.replace(/[^A-Za-z0-9]/g, "")[0] ?? "O").toUpperCase());
+    const copy = h("button", { class: "chip mono", type: "button", title: "Copy your BNB Chain address", onclick: async () => {
+      await navigator.clipboard.writeText(me.accountId).catch(() => undefined);
+      copy.textContent = "Copied";
+      window.setTimeout(() => (copy.textContent = short(me.accountId)), 1400);
+    } }, short(me.accountId));
+    const stat = (label: string, value: string, sub?: string) => h("div", { class: "acct-stat" }, h("span", {}, label), h("b", {}, value), sub ? h("small", {}, sub) : null);
+    const link = (href: string, label: string) => h("a", { class: "btn sm", href, target: "_blank", rel: "noreferrer" }, label, icon("external", 12));
+    body.replaceChildren(
+      h(
+        "div",
+        { class: "acct-hero" },
+        avatar,
+        h(
+          "div",
+          { class: "acct-names" },
+          h("b", {}, name),
+          h(
+            "div",
+            { class: "acct-chips" },
+            p ? h("a", { class: "chip accent", href: `${ORVYN_SOCIAL}/@${p.handle}`, target: "_blank", rel: "noreferrer" }, `@${p.handle} · ${p.agentId}`) : h("span", { class: "chip" }, "No Agent ID yet"),
+            h("span", { class: "chip" }, `Signed in with ${via}`),
+            copy,
+          ),
+          p?.bio ? h("p", { class: "acct-bio" }, p.bio) : null,
+        ),
+      ),
+      h("div", { class: "acct-stats" }, stat("BNB", bnb(me.balances.bnb)), stat("USDT + USDC", money(stable)), stat("Orvyn credits", money(credits)), stat("Agents", String(agents.total), agents.total ? `${agents.live} live` : undefined)),
+      p ? h("div", { class: "acct-stats three" }, stat("Posts", p.posts.toLocaleString()), stat("Followers", p.followers.toLocaleString()), stat("Following", p.following.toLocaleString())) : h("p", { class: "set-lede" }, "Claim the Agent ID (name.ai) your wallet holds on Orvyn Social and it becomes your @handle."),
+      h("div", { class: "acct-links" }, link(`${ORVYN_APP}/account`, "Manage on the web"), link(`${ORVYN_APP}/credits`, "Top up credits"), p ? link(`${ORVYN_SOCIAL}/@${p.handle}`, "Social profile") : link(ORVYN_SOCIAL, "Join Orvyn Social"), link(`https://bscscan.com/address/${me.accountId}`, "BscScan")),
+    );
+  });
+  return [...head("Account", "Who you are on Orvyn: the same account, wallet and agents on the web and your phone."), body];
+}
 
 /** A labelled setting: the label and a hint on the left, the control on the right. */
 const field = (label: string, hint: string | null, control: HTMLElement) =>
@@ -77,6 +130,8 @@ export async function open(opts: { signOut: () => void; section?: Section }) {
     function build(sec: Section): (HTMLElement | string)[] {
       const head = (title: string, lede: string) => [h("h2", {}, title), h("p", { class: "set-lede" }, lede)];
       switch (sec) {
+        case "account":
+          return accountPage(head);
         case "you": {
           const callMe = h("input", { maxlength: 40, placeholder: "Your name or a nickname", value: persona().callMe ?? "" }) as HTMLInputElement;
           const tone = h("select", {}, ...["warm", "playful", "calm", "direct"].map((t) => h("option", { value: t }, t[0].toUpperCase() + t.slice(1)))) as HTMLSelectElement;
