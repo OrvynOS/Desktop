@@ -162,11 +162,17 @@ export async function open(opts: { signOut: () => void; section?: Section }) {
           const model = h("input", { placeholder: "Model" }) as HTMLInputElement;
           const key = h("input", { type: "password", autocomplete: "off", placeholder: s ? "Leave empty to keep your key" : "Paste your API key" }) as HTMLInputElement;
           const getKey = h("a", { class: "link", target: "_blank", rel: "noreferrer" }, "Get a key", icon("external", 12));
+          // Orvyn AI needs no key: Vyn has her own (a free monthly allowance, then Orvyn credits).
+          const keyRow = field("API key", null, h("div", { class: "stack-sm" }, key, getKey));
+          const orvynNote = h("p", { class: "set-lede" }, "Orvyn AI: no key needed. Orvyn covers a free allowance of Vyn's usage each month; after that she uses your Orvyn credits.");
           const pick = (keepModel: boolean) => {
             const p = providers.find((x) => x.id === provider.value);
-            if (!keepModel) model.value = p?.preferredModel ?? "";
+            if (!keepModel) model.value = provider.value === "orvyn" ? "anthropic/claude-haiku-5.5" : (p?.preferredModel ?? "");
             if (p?.keyUrl) getKey.setAttribute("href", p.keyUrl);
             getKey.classList.toggle("hidden", !p?.keyUrl);
+            const orvyn = provider.value === "orvyn";
+            keyRow.classList.toggle("hidden", orvyn);
+            orvynNote.classList.toggle("hidden", !orvyn);
           };
           if (s) {
             provider.value = s.aiProvider;
@@ -176,13 +182,14 @@ export async function open(opts: { signOut: () => void; section?: Section }) {
           provider.addEventListener("change", () => pick(false));
           const st = status();
           return [
-            ...head("AI", "Vyn runs on your own AI provider key. It's stored encrypted on Orvyn and never shown again."),
+            ...head("AI", "Vyn runs on Orvyn AI out of the box. You can pick another model, or use your own AI provider key (stored encrypted on Orvyn, never shown again)."),
             field("Provider", null, provider),
             field("Model", null, model),
-            field("API key", null, h("div", { class: "stack-sm" }, key, getKey)),
+            orvynNote,
+            keyRow,
             h("div", { class: "set-actions" }, st, h("button", { class: "btn primary", type: "button", onclick: async () => {
-              if (!s && !key.value.trim()) return flash(st, "Paste your key.", false);
-              flash(st, "Checking the key…");
+              if (!s && provider.value !== "orvyn" && !key.value.trim()) return flash(st, "Paste your key.", false);
+              flash(st, provider.value === "orvyn" ? "Saving…" : "Checking the key…");
               const res = await api.saveSettings({ aiProvider: provider.value, aiModel: model.value.trim(), ...(key.value.trim() ? { apiKey: key.value.trim() } : {}), persona: persona(), timezone: TZ, checkInTime: s?.checkInTime ?? null });
               if (!res.ok) return flash(st, res.error ?? "That didn't work.", false);
               key.value = "";

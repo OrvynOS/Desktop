@@ -1,6 +1,6 @@
 {
   "name": "@orvyn/vyn-desktop",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Vyn, the Orvyn companion, for Windows, macOS and Linux",
   "main": "dist/main.js",
